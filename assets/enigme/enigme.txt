@@ -1,0 +1,3 @@
+puzzle.jpeg rep1.jpeg rep2.jpeg rep3.jpeg 1
+puzzle2.jpeg repA.jpeg repB.jpeg repC.jpeg 2
+puzzle3.jpeg a.jpeg b.jpeg c.jpeg 3
