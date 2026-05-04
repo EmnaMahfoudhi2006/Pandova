@@ -1,0 +1,13 @@
+digraph "MenuScore"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="MenuScore",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" champ_nom\nlabel_titre\nlignes\ntitre_scores" ,fontname="Helvetica"];
+  Node2 [label="TxtLabel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structTxtLabel.html",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" quitter\nretour\nvalider" ,fontname="Helvetica"];
+  Node3 [label="Btn",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structBtn.html",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" scores" ,fontname="Helvetica"];
+  Node4 [label="ScoreEntry",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structScoreEntry.html",tooltip=" "];
+}

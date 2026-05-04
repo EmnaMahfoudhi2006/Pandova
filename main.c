@@ -60,7 +60,7 @@
 static int HEART_X[NB_HEARTS] = {1500, 4000,  7000, 11000};
 static int HEART_Y[NB_HEARTS] = { 780,  780,   780,   780};
 static int BOW_X  [NB_BOWS]   = { 800, 2500,  5000,  8000, 12000};
-static int BOW_Y  [NB_BOWS]   = { 780,  780,   780,   780,   780};
+static int BOW_Y  [NB_BOWS]   = { 200,  200,   200,   200,   200};
 static int ROBOT_X [NB_ROBOTS] = {3500, 8000};
 static int ROBOT_Y [NB_ROBOTS] = {   0,    0};  /* 0 = sol auto */
 static int HUMAN_X [NB_HUMANS] = {3000, 7000, 11000};

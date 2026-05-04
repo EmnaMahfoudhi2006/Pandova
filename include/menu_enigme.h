@@ -1,4 +1,13 @@
-#ifndef MENU_ENIGME_H
+/**
+ * @file menu_enigme.h
+ * @brief Gestion du menu des énigmes
+ * @author Emna
+ * @date 2026
+ *
+ * Ce fichier contient les déclarations des fonctions
+ * du menu des énigmes dans le jeu SDL2.
+ */
+ #ifndef MENU_ENIGME_H
 #define MENU_ENIGME_H
 
 #include "header.h"

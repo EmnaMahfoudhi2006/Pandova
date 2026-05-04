@@ -1,0 +1,15 @@
+digraph "JeuState"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="JeuState",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" hearts" ,fontname="Helvetica"];
+  Node2 [label="Heart",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structHeart.html",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" bows" ,fontname="Helvetica"];
+  Node3 [label="Bow",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structBow.html",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" player" ,fontname="Helvetica"];
+  Node4 [label="Personage",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structPersonage.html",tooltip=" "];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" enemies" ,fontname="Helvetica"];
+  Node5 [label="Ennemi",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structEnnemi.html",tooltip=" "];
+}

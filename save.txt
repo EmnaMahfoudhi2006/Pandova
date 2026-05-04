@@ -1,0 +1,16 @@
+valid=1
+level=0
+mode=1
+char_id=0
+hp1=4
+hp2=0
+score1=250
+score2=0
+pos_x1=2343
+pos_y1=792
+pos_x2=0
+pos_y2=0
+bows1=1
+bows2=0
+name1=
+name2=

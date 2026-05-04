@@ -1,5 +1,24 @@
+/**
+ * @file menu_enigme.c
+ * @brief Gestion du menu des énigmes dans le jeu SDL2.
+ * @author Emna
+ * @date 2026
+ *
+ * Ce fichier contient les fonctions responsables de l'initialisation,
+ * la mise à jour, l'affichage et la libération des ressources du menu énigme.
+ */
+
 #include "../include/menu_enigme.h"
 
+/**
+ * @brief Démarre une nouvelle session d'énigmes.
+ *
+ * Cette fonction choisit aléatoirement les questions du round,
+ * initialise le score, les vies, le temps et les variables d'état.
+ *
+ * @param e Pointeur vers la structure MenuEnigme.
+ * @return void
+ */
 void enigme_start(MenuEnigme *e)
 {
     int chosen[ROUND_SIZE]; int cnt = 0;
@@ -25,6 +44,16 @@ void enigme_start(MenuEnigme *e)
     e->end_angle = 0.0;
 }
 
+/**
+ * @brief Met à jour l'état du menu énigme.
+ *
+ * Cette fonction gère le temps restant, la perte de vies,
+ * le passage à la question suivante, l'animation de fin
+ * et l'effet flash en cas d'erreur ou de temps écoulé.
+ *
+ * @param e Pointeur vers la structure MenuEnigme.
+ * @return void
+ */
 void update_enigme(MenuEnigme *e)
 {
     Uint32 now = SDL_GetTicks();
@@ -50,11 +79,20 @@ void update_enigme(MenuEnigme *e)
     }
 }
 
+/**
+ * @brief Initialise le menu énigme.
+ *
+ * Cette fonction charge les textures, les polices et les questions
+ * depuis le fichier questions.txt.
+ *
+ * @param r Pointeur vers le renderer SDL.
+ * @param e Pointeur vers la structure MenuEnigme.
+ * @return 1 si l'initialisation réussit, 0 sinon.
+ */
 int init_enigme(SDL_Renderer *r, MenuEnigme *e)
 {
     memset(e, 0, sizeof(*e));
     e->bg           = tex_load(r, P_ENIGME "background_game.png");
-    e->panel        = tex_load(r, P_ENIGME "panel.png");
     e->btnA         = tex_load(r, P_ENIGME "btn_a.png");
     e->btnA_h       = tex_load(r, P_ENIGME "btn_a_h.png");
     e->btnB         = tex_load(r, P_ENIGME "btn_b.png");
@@ -93,6 +131,16 @@ int init_enigme(SDL_Renderer *r, MenuEnigme *e)
     return 1;
 }
 
+/**
+ * @brief Affiche le menu énigme à l'écran.
+ *
+ * Cette fonction affiche soit le choix du mode, soit les questions,
+ * les réponses, le score, la barre de temps et l'écran de fin.
+ *
+ * @param r Pointeur vers le renderer SDL.
+ * @param e Pointeur vers la structure MenuEnigme.
+ * @return void
+ */
 void render_enigme(SDL_Renderer *r, MenuEnigme *e)
 {
     /* Zones definies via macros dans header.h — memes que les events */
@@ -110,7 +158,6 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
     if (e->bg) SDL_RenderCopy(r, e->bg, NULL, NULL);
 
     if (e->view == 0) {
-        /* Panel brun avec titre centré */
         if (e->panel) {
             SDL_Rect pr = {E_PANEL_X, E_PANEL_Y, E_PANEL_W, E_PANEL_H};
             SDL_RenderCopy(r, e->panel, NULL, &pr);
@@ -122,10 +169,11 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
             SDL_RenderCopy(r, tt, NULL, &tr);
             SDL_DestroyTexture(tt); SDL_FreeSurface(ts);
         }
-        /* QUIZ + PUZZLE dans zone bleue */
+
         SDL_Rect dq = quiz_r;
         if (e->hover_quiz) { dq.x-=6; dq.y-=3; dq.w+=12; dq.h+=6; }
         SDL_RenderCopy(r, (e->hover_quiz && e->quiz_btn_h) ? e->quiz_btn_h : e->quiz_btn, NULL, &dq);
+
         SDL_Rect dp = puzzle_r;
         if (e->hover_puzzle) { dp.x-=6; dp.y-=3; dp.w+=12; dp.h+=6; }
         SDL_RenderCopy(r, (e->hover_puzzle && e->puzzle_btn_h) ? e->puzzle_btn_h : e->puzzle_btn, NULL, &dp);
@@ -136,20 +184,16 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
             float ratio = 1.0f - (float)(SDL_GetTicks()-e->t_start) / (float)e->t_max;
             if (ratio < 0) ratio = 0;
 
-            /* HUD */
             char hud[64]; snprintf(hud, sizeof(hud), "Score: %d", e->score);
             draw_text(r, e->font_small, hud, 30, 20, black);
+
             SDL_Rect barBg = {30,50,200,14}, barFg = {30,50,(int)(200*ratio),14};
             SDL_SetRenderDrawColor(r, 50,50,50,255);   SDL_RenderFillRect(r, &barBg);
             SDL_SetRenderDrawColor(r, 20,200,120,255); SDL_RenderFillRect(r, &barFg);
+
             char prog[32]; snprintf(prog, sizeof(prog), "%d / %d", e->round_idx+1, ROUND_SIZE);
             draw_text(r, e->font_small, prog, WIN_W-100, 30, black);
 
-            /* Panel brun : QUESTION + texte question */
-            if (e->panel) {
-                SDL_Rect pr = {E_PANEL_X, E_PANEL_Y, E_PANEL_W, E_PANEL_H};
-                SDL_RenderCopy(r, e->panel, NULL, &pr);
-            }
             SDL_Surface *ts2 = TTF_RenderUTF8_Blended(e->font_title, "QUESTION", yellow);
             if (ts2) {
                 SDL_Texture *tt = SDL_CreateTextureFromSurface(r, ts2);
@@ -157,26 +201,28 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
                 SDL_RenderCopy(r, tt, NULL, &tr);
                 SDL_DestroyTexture(tt); SDL_FreeSurface(ts2);
             }
+
             draw_text_wrap(r, e->font, q->question, E_PANEL_X+20, E_PANEL_Y+75, E_PANEL_W-40, black);
 
-            /* Boutons A/B/C puis texte réponse à droite */
             SDL_Rect da = aR; if (e->hover_a) { da.x-=4; da.y-=2; da.w+=8; da.h+=4; }
             SDL_Rect db = bR; if (e->hover_b) { db.x-=4; db.y-=2; db.w+=8; db.h+=4; }
             SDL_Rect dc = cR; if (e->hover_c) { dc.x-=4; dc.y-=2; dc.w+=8; dc.h+=4; }
+
             SDL_RenderCopy(r, e->hover_a ? e->btnA_h : e->btnA, NULL, &da);
             SDL_RenderCopy(r, e->hover_b ? e->btnB_h : e->btnB, NULL, &db);
             SDL_RenderCopy(r, e->hover_c ? e->btnC_h : e->btnC, NULL, &dc);
+
             draw_text_wrap(r, e->font, q->answers[0], E_TXT_X, E_AY+(E_BH/2)-13, E_BLUE_W-(E_TXT_X-E_BLUE_X)-20, black);
             draw_text_wrap(r, e->font, q->answers[1], E_TXT_X, E_BY+(E_BH/2)-13, E_BLUE_W-(E_TXT_X-E_BLUE_X)-20, black);
             draw_text_wrap(r, e->font, q->answers[2], E_TXT_X, E_CY+(E_BH/2)-13, E_BLUE_W-(E_TXT_X-E_BLUE_X)-20, black);
 
         } else {
-            /* Ecran fin */
             if (e->show_hearts && e->heart)
                 for (int i = 0; i < e->vies; i++) {
                     SDL_Rect hr = {25+i*50, 20, 42, 42};
                     SDL_RenderCopy(r, e->heart, NULL, &hr);
                 }
+
             SDL_Texture *end = (e->vies > 0) ? e->survived : e->game_over;
             if (end) {
                 int w, h; SDL_QueryTexture(end, NULL, NULL, &w, &h);
@@ -186,6 +232,7 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
                 double ang = (e->vies > 0) ? -e->end_angle : e->end_angle;
                 SDL_RenderCopyEx(r, end, NULL, &dst, ang, NULL, SDL_FLIP_NONE);
             }
+
             char stats[128];
             snprintf(stats, sizeof(stats), "Score: %d   Correct: %d / %d",
                      e->score, e->corrects, ROUND_SIZE);
@@ -194,7 +241,6 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
         }
     }
 
-    /* Flash erreur */
     if (e->flash && !e->fini) {
         SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
         SDL_SetRenderDrawColor(r, 255, 0, 0, 80);
@@ -204,16 +250,26 @@ void render_enigme(SDL_Renderer *r, MenuEnigme *e)
     }
 }
 
+/**
+ * @brief Libère les ressources du menu énigme.
+ *
+ * Cette fonction détruit les textures et ferme les polices utilisées
+ * par le menu énigme afin d'éviter les fuites mémoire.
+ *
+ * @param e Pointeur vers la structure MenuEnigme.
+ * @return void
+ */
 void free_enigme(MenuEnigme *e)
 {
 #define DT(x) if(x){SDL_DestroyTexture(x);x=NULL;}
-    DT(e->bg) DT(e->panel)
+
     DT(e->btnA) DT(e->btnA_h) DT(e->btnB) DT(e->btnB_h)
     DT(e->btnC) DT(e->btnC_h)
     DT(e->quiz_btn) DT(e->quiz_btn_h)
     DT(e->puzzle_btn) DT(e->puzzle_btn_h)
     DT(e->heart) DT(e->game_over) DT(e->survived)
 #undef DT
+
     if (e->font)       { TTF_CloseFont(e->font);       e->font = NULL; }
     if (e->font_title) { TTF_CloseFont(e->font_title); e->font_title = NULL; }
     if (e->font_small) { TTF_CloseFont(e->font_small); e->font_small = NULL; }
